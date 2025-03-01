@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Well-Being Reports Automation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .upload-box {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            width: 80%;
+            border-radius: 10px;
+            background-color: #e9f5ff;
+        }
+        .message {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+        }
+        .button-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .loader {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .sample-file {
+            margin-top: 15px;
+        }
+    </style>
+    <script>
+        function uploadFile(event) {
+            event.preventDefault(); // Prevent form reload
+            document.getElementById('loader').style.display = 'inline-block'; // Show loader
+            document.getElementById('message').style.display = 'none'; // Hide message initially
+            
+            let formData = new FormData(document.getElementById('uploadForm'));
+            
+            fetch("/", { method: "POST", body: formData })
+                .then(response => response.blob())
+                .then(blob => {
+                    document.getElementById('loader').style.display = 'none'; // Hide loader
+                    let messageElement = document.getElementById('message');
+                    messageElement.style.display = 'block'; // Show message
+                    messageElement.textContent ="Zip file with PDF reports downloaded..";
+                    
+                    setTimeout(() => {
+                        messageElement.style.display = 'none'; // Hide after 2 seconds
+                    }, 2000);
+                    
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement('a');
+                    a.href = url;
+                    a.download = "generated_reports.zip"; // Auto-download ZIP
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                })
+                .catch(error => {
+                    document.getElementById('loader').style.display = 'none';
+                    alert("Error generating PDFs. Please try again.");
+                });
+
+            document.getElementById('uploadForm').reset(); // Clear input
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Mental Well-Being Reports Automation</h1>
+        <p>Upload an Excel file. A ZIP file with all PDFs will be downloaded automatically.</p>
+        
+        <p><a class="sample-file" href="/static/Sample_File.xlsx" download>Download Sample File</a></p>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-box">
+                <input type="file" name="file" required>
+            </div>
+            <div class="button-container">
+                <button type="submit" onclick="uploadFile(event)">Upload & Generate PDFs</button>
+                <div id="loader" class="loader"></div>
+            </div>
+        </form>
+        <p id="message" class="message"></p>
+    </div>
+</body>
+</html>

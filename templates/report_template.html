@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Well-Being Screening Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin-left: 40px;margin-right: 40px;margin-top: 5px; }
+        p{
+            margin: 5px;
+        }
+        div.page
+    {
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+    </style>
+</head>
+<body>
+
+        <div>
+            <table style="width: 100%; border: none">
+                <tr>
+                    <td style="text-align: left;">
+                        <img src="/static/dev-consortium.png" style="width: 140px; height: auto;max-width: 100%;">
+                    </td>
+                    <td style="text-align: right;">
+                        <img src="/static/teen-book.png" style="width: 90px; height: auto;max-width: 100%;">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div >
+            <table >
+                <tr>
+                    <p style="text-align: center;margin-top: 10px;">
+                        <span style="background-color: orange; padding-left:10px;padding-right:10px;color: white;">
+                            TeenBook Well-Being Screening Report
+                        </span>
+                    </p>
+                </tr>
+                <tr>
+                    <table style="border: 1px solid black;margin-left: 50px;margin-right: 50px;width: auto;">
+                        <tr>
+                            <td rowspan="2" style="font-size: small;border-right: 1px solid black;">
+                                <p><strong>Personal Information Of Student</strong></p>
+                                <p><strong>Name:</strong> {{ data['Name'] }}</p>
+                                <p><strong>Father's Name:</strong> {{ data["Father’s name"] }}</p>
+                                <p><strong>Class:</strong> {{ data['Class'] }}</p>
+                                <p><strong>Age:</strong> {{ data['Age'] }}</p>
+                                <p><strong>Gender:</strong> {{ data['Gender'] }}</p>
+                                <p><strong>School:</strong> {{ data['School Name'] }}</p>
+                                <p><strong>Date of Screening:</strong> {{ data['Date'] }}</p>
+                            </td>
+                            <td style="font-size: small;border-bottom: 1 px solid black;">
+                                <p><strong>Well-Being Status Categories (Score Chart)</strong></p>
+                                <p><strong>Satisfactory:</strong> 0-32</p>
+                                <p><strong>Mild Concern:</strong> 33-64</p>
+                                <p><strong>Moderate Concern:</strong> 65-96</p>
+                                <p><strong>Severe Concern:</strong> 97-128</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: small;">
+                                <p><strong>Your Score: </strong>{{ data['Composite scores'] }}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </tr>
+            </table>
+            <table style="margin-top: 10px;text-align: justify;">
+                <tr>
+                    <td>
+                        <p style="background-color:rgb(177, 50, 0);">
+                            <span  style="background-color:rgb(177, 50, 0); padding-left:5px;padding-right:5px;color: white;">Overall Summary</span>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;">
+                            {{ responses['Composite scores'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="background-color:rgb(177, 50, 0);">
+                            <span style="background-color:rgb(177, 50, 0); padding-left:5px;padding-right:5px;color: white;">Section Wise Summary</span>
+                        </p>
+                    </td>   
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Screen Time</span><br>
+                            {{ responses['screen_time'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>        
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Sleep Duration</span><br>
+                            {{ responses['sleep_time'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>  
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Eating Patterns</span><br>
+                            {{ responses['eating_habits'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Physical Activity</span><br>
+                            {{ responses['physical_activity'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Interpersonal Relationships</span><br>
+                            {{ responses['interpersonal_relationship'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Behavior</span><br>
+                            {{ responses['behavior'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Thinking</span><br>
+                            {{ responses['Thinking'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Body Signals</span><br>
+                            {{ responses['Body_signals'] }}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;">
+                            <span style="color: rgb(177, 50, 0);"><strong>.</strong> Emotions</span><br>
+                            {{ responses['Emotions'] }}
+                        </p>
+                    </td>
+                </tr>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size: smaller;margin-top: 10px;text-align: right;">
+                            <img src="/static/signature.png" style="width: 90px; height: auto;max-width: 100%;"><br>
+                            <span style="color: black;">
+                                Dr. Shishir Palsapure,<br>
+                                Senior PsychologistMSc - Applied Psychology, <br>
+                                BHMS, MD - Homeopathy
+                            </span>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+</body>
+</html>
