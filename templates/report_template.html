@@ -16,7 +16,6 @@
     </style>
 </head>
 <body>
-
         <div>
             <table style="width: 100%; border: none">
                 <tr>
@@ -30,43 +29,39 @@
             </table>
         </div>
         <div >
-            <table >
+           
+            <p style="text-align: center;margin-top: 10px;">
+                <span style="background-color: orange; padding-left:10px;padding-right:10px;color: white;">
+                    TeenBook Well-Being Screening Report
+                </span>
+            </p>
+            <table style="border: 1px solid black;margin:auto;width: 80%;">
                 <tr>
-                    <p style="text-align: center;margin-top: 10px;">
-                        <span style="background-color: orange; padding-left:10px;padding-right:10px;color: white;">
-                            TeenBook Well-Being Screening Report
-                        </span>
-                    </p>
+                    <td rowspan="2" style="font-size: small;border-right: 1px solid black;">
+                        <p><strong>Personal Information Of Student</strong></p>
+                        <p><strong>Name:</strong> {{ data['Name'] }}</p>
+                        <p><strong>Father's Name:</strong> {{ data["Father’s name"] }}</p>
+                        <p><strong>Class:</strong> {{ data['Class'] }}</p>
+                        <p><strong>Age:</strong> {{ data['Age'] }}</p>
+                        <p><strong>Gender:</strong> {{ data['Gender'] }}</p>
+                        <p><strong>School:</strong> {{ data['School Name'] }}</p>
+                        <p><strong>Date of Screening:</strong> {{ data['Date'] }}</p>
+                    </td>
+                    <td style="font-size: small;border-bottom: 1 px solid black;">
+                        <p><strong>Well-Being Status Categories (Score Chart)</strong></p>
+                        <p><strong>Satisfactory:</strong> 0-32</p>
+                        <p><strong>Mild Concern:</strong> 33-64</p>
+                        <p><strong>Moderate Concern:</strong> 65-96</p>
+                        <p><strong>Severe Concern:</strong> 97-128</p>
+                    </td>
                 </tr>
                 <tr>
-                    <table style="border: 1px solid black;margin-left: 50px;margin-right: 50px;width: auto;">
-                        <tr>
-                            <td rowspan="2" style="font-size: small;border-right: 1px solid black;">
-                                <p><strong>Personal Information Of Student</strong></p>
-                                <p><strong>Name:</strong> {{ data['Name'] }}</p>
-                                <p><strong>Father's Name:</strong> {{ data["Father’s name"] }}</p>
-                                <p><strong>Class:</strong> {{ data['Class'] }}</p>
-                                <p><strong>Age:</strong> {{ data['Age'] }}</p>
-                                <p><strong>Gender:</strong> {{ data['Gender'] }}</p>
-                                <p><strong>School:</strong> {{ data['School Name'] }}</p>
-                                <p><strong>Date of Screening:</strong> {{ data['Date'] }}</p>
-                            </td>
-                            <td style="font-size: small;border-bottom: 1 px solid black;">
-                                <p><strong>Well-Being Status Categories (Score Chart)</strong></p>
-                                <p><strong>Satisfactory:</strong> 0-32</p>
-                                <p><strong>Mild Concern:</strong> 33-64</p>
-                                <p><strong>Moderate Concern:</strong> 65-96</p>
-                                <p><strong>Severe Concern:</strong> 97-128</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: small;">
-                                <p><strong>Your Score: </strong>{{ data['Composite scores'] }}</p>
-                            </td>
-                        </tr>
-                    </table>
+                    <td style="font-size: small;">
+                        <p><strong>Your Score: </strong>{{ data['Composite scores'] }}</p>
+                    </td>
                 </tr>
             </table>
+               
             <table style="margin-top: 10px;text-align: justify;">
                 <tr>
                     <td>
