@@ -64,11 +64,17 @@
     <script>
         function uploadFile(event) {
             event.preventDefault(); // Prevent form reload
-            document.getElementById('loader').style.display = 'inline-block'; // Show loader
+           
             document.getElementById('message').style.display = 'none'; // Hide message initially
             
             let formData = new FormData(document.getElementById('uploadForm'));
-            
+            let fileInput = document.querySelector("input[type='file']");
+            if (!fileInput.files.length) {
+                alert("No file selected. Please choose a file before submitting.");
+                event.preventDefault();  // Stop form submission
+                return false;
+            }
+            document.getElementById('loader').style.display = 'inline-block'; // Show loader
             fetch("/", { method: "POST", body: formData })
                 .then(response => response.blob())
                 .then(blob => {
