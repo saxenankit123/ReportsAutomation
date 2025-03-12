@@ -14,6 +14,26 @@ UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER_BASE = "output"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file:
+            filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.save(filepath)
+            output_folder = process_file(filepath)
+            zip_path = create_zip(output_folder)
+            
+            # Schedule cleanup after 5 seconds to ensure file transfer completes
+            def delayed_cleanup():
+                time.sleep(5)  # Wait for file transfer to finish
+                cleanup(output_folder, zip_path, filepath)  # Delete all files
+
+            threading.Thread(target=delayed_cleanup).start()  # Run cleanup in the background
+
+            return send_file(zip_path, as_attachment=True)
+    return render_template('upload.html')
+
 def load_summary():
     """Load the summary file and store responses in a dictionary."""
     df = pd.read_excel(SUMMARY_FILE)
@@ -50,25 +70,7 @@ def create_zip(output_folder):
                     zipf.write(os.path.join(root, file), file)
     return zip_filename
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file:
-            filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(filepath)
-            output_folder = process_file(filepath)
-            zip_path = create_zip(output_folder)
-            
-            # Schedule cleanup after 5 seconds to ensure file transfer completes
-            def delayed_cleanup():
-                time.sleep(5)  # Wait for file transfer to finish
-                cleanup(output_folder, zip_path, filepath)  # Delete all files
 
-            threading.Thread(target=delayed_cleanup).start()  # Run cleanup in the background
-
-            return send_file(zip_path, as_attachment=True)
-    return render_template('upload.html')
 def cleanup(folder_path, zip_path, uploaded_file):
     try:
         if os.path.exists(folder_path):
@@ -106,13 +108,19 @@ options = {
     "print-media-type": "",
 }
 
-def generate_pdf(data, output_folder):
-
+def generate_pdf(original_data, output_folder):
+    # Trim all string values in the dictionary
+    data = {k: v.strip() if isinstance(v, str) else v for k, v in original_data.items()}
     class_name = data.get('Class', 'Unknown').replace(" ", "_")
     child_name = data.get('Name', 'Unknown').replace(" ", "_")
     father_name = data.get("Father’s name", "Unknown").replace(" ", "_")
+    
+    date_string = str(data.get("Date", ""))
+    date_part = date_string.split(" ")[0] if date_string else ""  # Take the first part
+
+    data["Date"] = date_part
+    
     pdf_filename = f"{class_name}_{child_name}_{father_name}.pdf"
-    print('generating PDF - '+pdf_filename)
     pdf_path = os.path.join(output_folder, pdf_filename)
     
     # Assign responses dynamically based on summary.xlsx
@@ -124,7 +132,7 @@ def generate_pdf(data, output_folder):
     rendered_html = rendered_html.replace('/static/', f'file:///{static_folder}/')
 
     # Save HTML for debugging
-    # html_path = os.path.join(output_folder, f"Report_{index + 1}.html")
+    # html_path = os.path.join(output_folder, f"Report_{child_name}.html")
     # with open(html_path, "w", encoding="utf-8") as f:
     #    f.write(rendered_html)
 
