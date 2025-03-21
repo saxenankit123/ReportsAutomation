@@ -40,7 +40,7 @@
                     <td rowspan="2" style="font-size: small;border-right: 1px solid black;">
                         <p><strong>Personal Information Of Student</strong></p>
                         <p><strong>Name:</strong> {{ data['Name'] }}</p>
-                        <p><strong>Father's Name:</strong> {{ data["Father’s name"] }}</p>
+                        <p><strong>Father's Name:</strong> {{ data["father_name"] }}</p>
                         <p><strong>Class:</strong> {{ data['Class'] }}</p>
                         <p><strong>Age:</strong> {{ data['Age'] }}</p>
                         <p><strong>Gender:</strong> {{ data['Gender'] }}</p>
@@ -73,7 +73,7 @@
                 <tr>
                     <td>
                         <p style="font-size: smaller;">
-                            {{ responses['composite_score'] }}
+                            {{ data['composite_score_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -88,7 +88,7 @@
                     <td>
                         <p style="font-size: smaller;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Screen Time</span><br>
-                            {{ responses['screen_time'] }}
+                            {{ data['screen_time_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -96,7 +96,7 @@
                     <td>        
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Sleep Duration</span><br>
-                            {{ responses['sleep_time'] }}
+                            {{ data['sleep_time_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -104,7 +104,7 @@
                     <td>  
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Eating Patterns</span><br>
-                            {{ responses['eating_habits'] }}
+                            {{ data['eating_habits_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -112,7 +112,7 @@
                     <td>
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Physical Activity</span><br>
-                            {{ responses['physical_activity'] }}
+                            {{ data['physical_activity_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -120,7 +120,7 @@
                     <td>
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Interpersonal Relationships</span><br>
-                            {{ responses['interpersonal_relationship'] }}
+                            {{ data['interpersonal_relationship_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -128,7 +128,7 @@
                     <td>
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Behavior</span><br>
-                            {{ responses['behavior'] }}
+                            {{ data['behavior_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -136,7 +136,7 @@
                     <td>
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Thinking</span><br>
-                            {{ responses['thinking'] }}
+                            {{ data['thinking_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -144,7 +144,7 @@
                     <td>
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Body Signals</span><br>
-                            {{ responses['body_signals'] }}
+                            {{ data['body_signals_summary'] }}
                         </p>
                     </td>
                 </tr>
@@ -152,7 +152,7 @@
                     <td>
                         <p style="font-size: smaller;margin-top: 10px;">
                             <span style="color: rgb(177, 50, 0);"><strong>.</strong> Emotions</span><br>
-                            {{ responses['emotions'] }}
+                            {{ data['emotions_summary'] }}
                         </p>
                     </td>
                 </tr>
