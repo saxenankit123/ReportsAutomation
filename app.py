@@ -52,7 +52,9 @@ def generate_report():
 
         threading.Thread(target=delayed_cleanup).start()  # Run cleanup in the background
 
-        return send_file(pdf_path, as_attachment=True)
+        response = send_file(pdf_path, mimetype='application/pdf')
+        response.headers["Content-Disposition"] = "inline; filename=report.pdf"
+        return response
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
