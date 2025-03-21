@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_file
+from flask import Flask, jsonify, request, render_template, send_file
 import pandas as pd
 import pdfkit
 import os
@@ -33,6 +33,46 @@ def upload_file():
 
             return send_file(zip_path, as_attachment=True)
     return render_template('upload.html')
+
+
+@app.route('/report?', methods=['GET'])
+def generate_report():
+    try:
+        query_params = request.args.to_dict()  # Convert query params to dictionary
+
+        if not query_params:
+            return jsonify({"error": "Missing query parameters"}), 400
+        
+        pdf_path = generate_pdf_from_query_params(query_params)
+        return send_file(pdf_path, as_attachment=True)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def generate_pdf_from_query_params(query_params):
+    """Generate a PDF from query parameters."""
+    output_folder = get_output_folder()
+    
+    # Extract parameters from query string
+    child_name = query_params.get('name', 'Unknown').replace(" ", "_")
+    father_name = query_params.get("father_name", "Unknown").replace(" ", "_")
+    pdf_filename = f"{child_name}_{father_name}.pdf"
+    pdf_path = os.path.join(output_folder, pdf_filename)
+    
+    # Render HTML with provided data
+    rendered_html = render_template("report_template.html", data=query_params)
+
+    # Save the HTML for debugging (optional)
+    html_path = os.path.join(output_folder, "debug.html")
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(rendered_html)
+
+    # Generate the PDF
+    pdfkit.from_string(rendered_html, pdf_path, options={"enable-local-file-access": ""})
+    
+    return pdf_path
+    
+
 
 def load_summary():
     """Load the summary file and store responses in a dictionary."""
