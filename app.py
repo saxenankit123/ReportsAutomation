@@ -178,10 +178,26 @@ def create_pdf(data,rendered_html,output_folder):
     class_name = str(data.get('Class', 'Unknown')).replace(" ", "_")
     child_name = data.get('Name', 'Unknown').replace(" ", "_")
     father_name = get_father_name(data)
-    pdf_filename = f"{class_name}_{child_name}_{father_name}.pdf"
-    pdf_path = os.path.join(output_folder, pdf_filename)
+   
+    pdf_path = get_unique_filename(output_folder,class_name,child_name,father_name)
+
     # Generate PDF
     pdfkit.from_string(rendered_html, pdf_path, options=options)
+    return pdf_path
+    
+def get_unique_filename(output_folder, class_name, child_name, father_name):
+    base_filename = f"{class_name}_{child_name}_{father_name}"
+    extension = ".pdf"
+    counter = 1
+
+    # Construct initial file path
+    pdf_path = os.path.join(output_folder, base_filename + extension)
+
+    # Check if file exists, and if so, append a counter
+    while os.path.exists(pdf_path):
+        pdf_path = os.path.join(output_folder, f"{base_filename}_{counter}{extension}")
+        counter += 1  # Increment counter if file exists
+
     return pdf_path
     
 def get_father_name(data):
