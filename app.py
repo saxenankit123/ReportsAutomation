@@ -175,7 +175,7 @@ def create_html(data):
 
 
 def create_pdf(data,rendered_html,output_folder):
-    class_name = data.get('Class', 'Unknown').replace(" ", "_")
+    class_name = str(data.get('Class', 'Unknown')).replace(" ", "_")
     child_name = data.get('Name', 'Unknown').replace(" ", "_")
     father_name = get_father_name(data)
     pdf_filename = f"{class_name}_{child_name}_{father_name}.pdf"
