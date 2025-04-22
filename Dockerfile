@@ -9,6 +9,7 @@ COPY . /app
 # Install system dependencies for wkhtmltopdf
 RUN apt-get update && apt-get install -y \
     wkhtmltopdf \
+    fonts-noto  \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
