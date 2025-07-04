@@ -18,10 +18,11 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
+        language = request.form.get('language')
         if file:
             filepath = os.path.join(UPLOAD_FOLDER, file.filename)
             file.save(filepath)
-            output_folder = process_file(filepath)
+            output_folder = process_file(filepath,language)
             zip_path = create_zip(output_folder)
             
             # Schedule cleanup after 5 seconds to ensure file transfer completes
@@ -43,7 +44,7 @@ def generate_report():
         if not query_params:
             return jsonify({"error": "Missing query parameters"}), 400
         output_folder = get_output_folder()
-        pdf_path = generate_pdf(query_params,output_folder)
+        pdf_path = generate_pdf(query_params,output_folder,"Hindi")
 
          # Schedule cleanup after 5 seconds to ensure file transfer completes
         def delayed_cleanup():
@@ -115,12 +116,12 @@ def cleanup(folder_path, zip_path, uploaded_file):
     except Exception as e:
         print(f"Error during cleanup: {e}")
 
-def process_file(filepath):
+def process_file(filepath,language):
     df = pd.read_excel(filepath) if filepath.endswith('.xlsx') else pd.read_csv(filepath)
     df.rename(columns=lambda x: x.strip(), inplace=True)
     output_folder = get_output_folder()
     for index, row in df.iterrows():
-        generate_pdf(row, output_folder)
+        generate_pdf(row, output_folder,language)
     return output_folder
 
 options = {
@@ -134,10 +135,10 @@ options = {
     "print-media-type": "",
 }
 
-def generate_pdf(data,output_folder):
+def generate_pdf(data,output_folder,language):
     data = clean_data(data)
     get_and_update_summary_for_scores(data)
-    rendered_html = create_html(data)
+    rendered_html = create_html(data,language)
 
     return create_pdf(data,rendered_html,output_folder)
 
@@ -158,9 +159,13 @@ def get_and_update_summary_for_scores(data):
         for param in summary_data.keys()
     })
 
-def create_html(data):
+def create_html(data,language):
     data.update({'father_name':get_father_name(data)})
-    rendered_html = render_template("report_template.html", data=data)
+
+    if(language=="Hindi"):
+        rendered_html = render_template("report_template_hindi.html", data=data)
+    else:
+        rendered_html = render_template("report_template_english.html", data=data)
 
     # Convert static paths to absolute file paths
     static_folder = os.path.abspath("static")

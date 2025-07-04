@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>कल्याण मूल्यांकन रिपोर्ट</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin-left: 40px;margin-right: 40px;margin-top: 5px; }
+        p{
+            margin: 5px;
+        }
+        div.page {
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table style="width: 100%; border: none">
+            <tr>
+                <td style="text-align: left;">
+                    <img src="/static/dev-consortium.png" style="width: 140px; height: auto;max-width: 100%;">
+                </td>
+                <td style="text-align: right;">
+                    <img src="/static/teen-book.png" style="width: 90px; height: auto;max-width: 100%;">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <p style="text-align: center;margin-top: 10px;">
+            <span style="background-color: orange; padding-left:10px;padding-right:10px;color: white;">
+                टीनबुक कल्याण मूल्यांकन रिपोर्ट
+            </span>
+        </p>
+        <table style="border: 1px solid black;margin:auto;width: 80%;">
+            <tr>
+                <td rowspan="2" style="font-size: small;border-right: 1px solid black;">
+                    <p><strong>छात्र की व्यक्तिगत जानकारी</strong></p>
+                    <p><strong>नाम:</strong> {{ data['Name'] }}</p>
+                    <p><strong>पिता का नाम:</strong> {{ data["father_name"] }}</p>
+                    <p><strong>कक्षा:</strong> {{ data['Class'] }}</p>
+                    <p><strong>आयु:</strong> {{ data['Age'] }}</p>
+                    <p><strong>लिंग:</strong> {{ data['Gender'] }}</p>
+                    <p><strong>विद्यालय:</strong> {{ data['School Name'] }}</p>
+                    <p><strong>मूल्यांकन की तारीख:</strong> {{ data['Date'] }}</p>
+                </td>
+                <td style="font-size: small;border-bottom: 1px solid black;">
+                    <p><strong>कल्याण श्रेणियाँ (स्कोर चार्ट)</strong></p>
+                    <p><strong>संतोषजनक:</strong> 0-32</p>
+                    <p><strong>मामूली चिंता:</strong> 33-64</p>
+                    <p><strong>मध्यम चिंता:</strong> 65-96</p>
+                    <p><strong>गंभीर चिंता:</strong> 97-128</p>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: small;">
+                    <p><strong>आपका स्कोर: </strong>{{ data['composite_score'] }}</p>
+                </td>
+            </tr>
+        </table>
+
+        <table style="margin-top: 10px;text-align: justify;">
+            <tr>
+                <td>
+                    <p style="background-color:rgb(177, 50, 0);">
+                        <span style="background-color:rgb(177, 50, 0); padding-left:5px;padding-right:5px;color: white;">कुल सारांश</span>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;">
+                        {{ data['composite_score_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="background-color:rgb(177, 50, 0);">
+                        <span style="background-color:rgb(177, 50, 0); padding-left:5px;padding-right:5px;color: white;">विभागवार सारांश</span>
+                    </p>
+                </td>   
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> स्क्रीन समय</span><br>
+                        {{ data['screen_time_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>        
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> नींद की अवधि</span><br>
+                        {{ data['sleep_time_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>  
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> भोजन की आदतें</span><br>
+                        {{ data['eating_habits_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> शारीरिक गतिविधि</span><br>
+                        {{ data['physical_activity_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> पारस्परिक संबंध</span><br>
+                        {{ data['interpersonal_relationship_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> व्यवहार</span><br>
+                        {{ data['behavior_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> सोच</span><br>
+                        {{ data['thinking_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> शारीरिक संकेत</span><br>
+                        {{ data['body_signals_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;">
+                        <span style="color: rgb(177, 50, 0);"><strong>.</strong> भावनाएँ</span><br>
+                        {{ data['emotions_summary'] }}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: smaller;margin-top: 10px;text-align: right;">
+                        <img src="/static/signature.png" style="width: 90px; height: auto;max-width: 100%;"><br>
+                        <span style="color: black;">
+                            डॉ. शिशिर पालसापूरे,<br>
+                            वरिष्ठ मनोवैज्ञानिक<br>
+                            एमएससी - एप्लाइड साइकोलॉजी,<br>
+                            बीएचएमएस, एमडी - होम्योपैथी
+                        </span>
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
