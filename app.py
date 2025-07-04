@@ -68,18 +68,21 @@ def load_summary():
         param = row['Parameter']
         if param not in summary_dict:
             summary_dict[param] = []
-        summary_dict[param].append((row['Lower Score'], row['Higher Score'], row['Response']))
+        summary_dict[param].append((row['Lower Score'], row['Higher Score'], row['Response'], row['Hindi Response']))
     return summary_dict
 
 summary_data = load_summary()
 
-def get_response(parameter, score):
+def get_response(parameter, score,language):
     """Fetch response based on the score range for the given parameter."""
     score = int(score)
     if parameter in summary_data:
-        for lower, upper, response in summary_data[parameter]:
+        for lower, upper, response, hindi_response in summary_data[parameter]:
             if lower <= score <= upper:
-                return response
+                if language == "Hindi":
+                    return hindi_response
+                else:
+                    return response
     return "No response available."
 
 def get_output_folder():
@@ -137,7 +140,7 @@ options = {
 
 def generate_pdf(data,output_folder,language):
     data = clean_data(data)
-    get_and_update_summary_for_scores(data)
+    get_and_update_summary_for_scores(data,language)
     rendered_html = create_html(data,language)
 
     return create_pdf(data,rendered_html,output_folder)
@@ -153,9 +156,9 @@ def clean_data(data):
 
     return data
 
-def get_and_update_summary_for_scores(data):
+def get_and_update_summary_for_scores(data,language):
     data.update({
-        param + "_summary": get_response(param, data.get(param, 0))
+        param + "_summary": get_response(param, data.get(param, 0),language)
         for param in summary_data.keys()
     })
 
