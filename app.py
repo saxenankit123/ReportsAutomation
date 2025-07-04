@@ -184,7 +184,14 @@ def create_html(data,language):
 
 def create_pdf(data,rendered_html,output_folder):
     class_name = str(data.get('Class', 'Unknown')).replace(" ", "_")
-    child_name = data.get('Name', 'Unknown').replace(" ", "_")
+    child_name = data.get('Name', 'Unknown')
+
+    if pd.isna(child_name):
+        child_name = "Unknown"
+    else:
+        child_name = str(child_name).replace(" ", "_")
+    
+    
     father_name = get_father_name(data)
    
     pdf_path = get_unique_filename(output_folder,class_name,child_name,father_name)
