@@ -213,8 +213,13 @@ def get_father_name(data):
         data.get("Father's name") or  # Try straight apostrophe
         data.get("Father’s name") or  # Try curly apostrophe
         "Unknown"  # Default if both fail
-    ).replace(" ", "_")
-    return father_name
+    )
+    if pd.notna(father_name):
+        father_name = father_name.replace(" ", "_")
+        return father_name
+    else:
+        return "Unknown"
+    
 
 
 if __name__ == '__main__':
