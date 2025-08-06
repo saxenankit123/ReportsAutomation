@@ -237,7 +237,7 @@ def get_category(data,language):
             if language == "Hindi":
                 data["category"]="संतोषजनक"
             else:
-                data["category"]="Satisfactory"
+                data["category"]="Insignificant Concern"
         case score if 43 <= score <= 84:
             if language == "Hindi":
                 data["category"]="थोड़ी परेशानी"
