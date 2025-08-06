@@ -141,6 +141,7 @@ options = {
 def generate_pdf(data,output_folder,language):
     data = clean_data(data)
     get_and_update_summary_for_scores(data,language)
+    get_category(data,language)
     rendered_html = create_html(data,language)
 
     return create_pdf(data,rendered_html,output_folder)
@@ -226,8 +227,37 @@ def get_father_name(data):
         return father_name
     else:
         return "Unknown"
-    
 
+def get_category(data,language):
+    
+    composite_score = int(data.get("composite_score"))
+    
+    match composite_score:
+        case score if 0 <= score <= 42:
+            if language == "Hindi":
+                data["category"]="संतोषजनक"
+            else:
+                data["category"]="Satisfactory"
+        case score if 43 <= score <= 84:
+            if language == "Hindi":
+                data["category"]="थोड़ी परेशानी"
+            else:
+                data["category"]="Mild Concern"
+        case score if 85 <= score <= 126:
+            if language == "Hindi":
+                data["category"]="कम परेशानी"
+            else:
+                data["category"]="Moderate Concern"
+        case score if 127 <= score < 168:
+            if language == "Hindi":
+                data["category"]="गंभीर परेशानी"
+            else:
+                data["category"]="Severe Concern"
+        case _:
+            if language == "Hindi":
+                data["category"]="अमान्य स्कोर"
+            else:
+                data["category"]="Invalid score"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
