@@ -1,358 +1,707 @@
 
+
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>MMU Prescription Card</title>
 
+
+
     <style>
+
         * { box-sizing: border-box; }
 
+
+
         body {
+
             font-family: Arial, Helvetica, sans-serif;
+
             font-size: 12px;
+
             color: #222;
+
             margin: 0;
+
             padding: 20px;
+
         }
+
+
 
         .prescription {
+
             width: 100%;
+
             max-width: 800px;
+
             margin: auto;
+
             border: 1px solid #333;
+
             padding: 20px;
+
         }
+
+
 
         .header {
+
             text-align: center;
+
             border-bottom: 2px solid #333;
+
             padding-bottom: 12px;
+
             margin-bottom: 15px;
+
         }
+
+
 
         .header h1 { font-size: 20px; margin: 0 0 6px; }
+
         .header h2 { font-size: 16px; margin: 0; font-weight: normal; }
 
+
+
         .doctor-details {
+
             display: flex;
+
             justify-content: space-between;
+
             gap: 20px;
+
             margin-bottom: 16px;
+
         }
+
+
 
         .section { margin-bottom: 15px; }
 
+
+
         .section-title {
+
             background: #eee;
+
             border: 1px solid #999;
+
             padding: 7px 8px;
+
             font-size: 13px;
+
             font-weight: bold;
+
             margin-bottom: 10px;
+
         }
+       /* Flexbox is more reliable than CSS Grid in wkhtmltopdf */
+       .field-grid {
+           display: flex;
+           flex-wrap: wrap;
+           margin-left: -8px;
+           margin-right: -8px;
+       }
 
-        .field-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 20px;
-        }
+       .field {
+           display: block;
+           width: 50%;
+           min-width: 0;
+           padding: 5px 8px;
+           vertical-align: top;
+       }
 
-        .field { min-width: 0; }
-        .field.full { grid-column: 1 / -1; }
-        .label { font-weight: bold; }
-        .value { overflow-wrap: anywhere; }
+       .field.full { width: 100%; }
+       .label { font-weight: bold; }
+       .value { overflow-wrap: anywhere; word-wrap: break-word; }
 
-        .special-categories {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px 8px;
-        }
+       .special-categories {
+           display: block;
+           width: 100%;
+           font-size: 0;
+       }
 
-        .category {
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-        }
+       .category {
+           display: inline-block;
+           vertical-align: top;
+           width: 32%;
+           margin: 0 1% 8px 0;
+           font-size: 12px;
+           white-space: nowrap;
+       }
 
-        .checkbox {
+       .category .checkbox {
+           display: inline-block;
+           vertical-align: middle;
+           margin-right: 4px;
+       }
+
+       .checkbox {
+
             width: 12px;
+
             height: 12px;
+
             border: 1px solid #333;
+
             flex-shrink: 0;
+
             text-align: center;
+
             line-height: 10px;
+
             font-size: 11px;
+
         }
+
+
 
         table {
+
             width: 100%;
+
             border-collapse: collapse;
+
             margin-bottom: 10px;
+
         }
 
+
+
         td, th {
+
             border: 1px solid #999;
+
             padding: 9px 8px;
+
             text-align: left;
+
             vertical-align: top;
+
         }
+
+
 
         th { background: #f5f5f5; }
 
+
+
         .notes-area,
+
         .diagnosis-area,
+
         .referral-area,
+
         .signature-area,
+
         .prescription-area {
+
             white-space: pre-wrap;
+
             overflow-wrap: anywhere;
+
             padding: 8px 0;
+
         }
+
+
 
         .notes-area { min-height: 40px; }
+
         .diagnosis-area { min-height: 50px; }
+
         .prescription-area { min-height: 120px; }
+
         .referral-area { min-height: 60px; }
+
         .signature-area { min-height: 70px; }
 
+
+
         .footer {
+
             border-top: 1px solid #999;
+
             padding-top: 8px;
+
             margin-top: 20px;
+
             font-size: 10px;
+
             text-align: center;
+
         }
 
+
+
         @media print {
+
             @page { size: A4; margin: 10mm; }
+
+
 
             body { padding: 0; }
 
+
+
             .prescription {
+
                 max-width: none;
+
                 border: 1px solid #333;
+
                 padding: 15px;
+
             }
+
+
 
             .no-print { display: none !important; }
 
+
+
             .section-title {
+
                 print-color-adjust: exact;
+
                 -webkit-print-color-adjust: exact;
+
             }
+
         }
+
+
 
         @media screen and (max-width: 600px) {
+
             body { padding: 8px; }
+
             .prescription { padding: 12px; }
+
             .field-grid { grid-template-columns: 1fr; }
+
             .field.full { grid-column: auto; }
+
             .special-categories { grid-template-columns: repeat(2, 1fr); }
+
             .doctor-details { flex-direction: column; gap: 8px; }
+
         }
+
     </style>
+
 </head>
 
+
+
 <body>
+
 <div class="prescription">
 
+
+
     <!-- HEADER -->
+
     <div class="header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 20px;"> 
+
     <div style="flex: 1; text-align: left;"> 
+
         <img src="/static/dev-consortium.png" style="width: 140px; height: auto; max-width: 100%;"> 
+
     </div> 
+
     <div style="flex: 2; text-align: center;"> 
+
         <h1 style="margin: 0; font-size: 20px;">MMU (Mobile Medical Unit)</h1> 
+
         <h2 style="margin: 5px 0 0 0; font-size: 18px; font-weight: normal;">PRESCRIPTION / CARD</h2> 
+
     </div> 
+
     <div style="flex: 1; text-align: right;"> 
+
         <img src="/static/Sehat_sarthi_logo.png" style="width: 140px; height: auto; max-width: 100%;"> 
+
     </div> 
+
     </div>
+
+
+
 
 
     <!-- DOCTOR DETAILS -->
+
     <div class="doctor-details">
+
         <div>
+
             <span class="label">Doctor's Name:</span>
+
             <span class="value">Dr. Vijay</span>
+
         </div>
+
         <div>
+
             <span class="label">Registration Number:</span>
+
             <span class="value">RMC - 72222</span>
+
         </div>
+
     </div>
+
+
 
     <!-- PATIENT PROFILE -->
+
     <div class="section">
+
         <div class="section-title">PATIENT PROFILE</div>
 
+
+
         <div class="field-grid">
+
             <div class="field">
+
                 <span class="label">Date of Registration:</span>
+
                 <span class="value">{{ registration_date | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Patient ID:</span>
+
                 <span class="value">{{ patient_id | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Patient Name:</span>
+
                 <span class="value">{{ patient_name | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Gender:</span>
+
                 <span class="value">{{ gender | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Age:</span>
+
                 <span class="value">{{ age | default('', true) }} years</span>
+
             </div>
+
+
 
             <div class="field full">
+
                 <span class="label">Address:</span>
+
                 <span class="value">{{ address | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Village:</span>
+
                 <span class="value">{{ village | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Block:</span>
+
                 <span class="value">{{ block | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">District:</span>
+
                 <span class="value">{{ district | default('', true) }}</span>
+
             </div>
 
+
+
             <div class="field">
+
                 <span class="label">Phone Number:</span>
+
                 <span class="value">{{ phone_number | default('', true) }}</span>
+
             </div>
+
         </div>
+
     </div>
+
+
 
     <!-- SPECIAL CATEGORY -->
+
     <div class="section">
+
         <div class="section-title">SPECIAL CATEGORY (Tick if applicable)</div>
 
+
+
         <div class="special-categories">
+
             <div class="category">
+
                 <span class="checkbox">{% if pregnant_woman %}✓{% endif %}</span>
+
                 Pregnant Woman
+
             </div>
 
+
+
             <div class="category">
+
                 <span class="checkbox">{% if child_under_5 %}✓{% endif %}</span>
-                Child (&lt;5 years)
+
+                Child (<5 years)
+
             </div>
 
+
+
             <div class="category">
+
                 <span class="checkbox">{% if adolescent %}✓{% endif %}</span>
+
                 Adolescent (10-19 years)
+
             </div>
 
+
+
             <div class="category">
+
                 <span class="checkbox">{% if elderly %}✓{% endif %}</span>
-                Elderly (&ge;60 years)
+
+                Elderly (≥60 years)
+
             </div>
 
+
+
             <div class="category">
+
                 <span class="checkbox">{% if high_risk_patient %}✓{% endif %}</span>
+
                 High-Risk Patient
+
             </div>
+
         </div>
+
     </div>
+
+
 
     <!-- VITALS -->
+
     <div class="section">
+
         <div class="section-title">VITALS</div>
 
+
+
         <table>
+
             <tbody>
+
                 <tr>
+
                     <td><strong>Height:</strong> {{ height_cm | default('', true) }} cm</td>
+
                     <td><strong>Weight:</strong> {{ weight_kg | default('', true) }} kg</td>
+
                     <td><strong>BMI:</strong> {{ bmi | default('', true) }}</td>
+
                     <td><strong>Blood Pressure:</strong>{{ blood_pressure | default('', true) }} mmHg</td>
+
                 </tr>
+
                 <tr>
+
                     <td><strong>Temperature:</strong> {{ temperature_f | default('', true) }} °F</td>
+
                     <td><strong>SpO₂:</strong> {{ spo2 | default('', true) }} %</td>
+
                     <td><strong>Respiratory Rate:</strong> {{ respiratory_rate | default('', true) }} /min</td>
+
                 </tr>
+
             </tbody>
+
         </table>
+
     </div>
+
+
 
     <!-- SCREENING TESTS -->
+
     <div class="section">
+
         <div class="section-title">SCREENING TESTS</div>
 
+
+
         <table>
+
             <tbody>
-                <tr>
-                    <td>
-                        <strong>RBS/FBS:</strong>
-                        {{ blood_sugar_value | default('', true) }} mg/dL
-                    </td>
-                    <td><strong>Hb:</strong> {{ hemoglobin | default('', true) }} g/dL</td>
-                </tr>
 
                 <tr>
-                    <td colspan="2">
-                        <strong>Other Findings:</strong>
-                        <div class="notes-area">{{ other_findings | default('', true) }}</div>
+
+                    <td>
+
+                        <strong>RBS/FBS:</strong>
+
+                        {{ blood_sugar_value | default('', true) }} mg/dL
+
                     </td>
+
+                    <td><strong>Hb:</strong> {{ hemoglobin | default('', true) }} g/dL</td>
+
                 </tr>
+
+
+
+                <tr>
+
+                    <td colspan="2">
+
+                        <strong>Other Findings:</strong>
+
+                        <div class="notes-area">{{ other_findings | default('', true) }}</div>
+
+                    </td>
+
+                </tr>
+
             </tbody>
+
         </table>
+
     </div>
+
+
 
     <!-- PROVISIONAL DIAGNOSIS -->
+
     <div class="section">
+
         <div class="section-title">PROVISIONAL DIAGNOSIS</div>
+
         <div class="diagnosis-area">{{ provisional_diagnosis | default('', true) }}</div>
+
     </div>
 
+
+
     <!-- PRESCRIPTION / ADVICE -->
+
     <div class="section">
+
         <div class="section-title">Rx / ADVICE</div>
+
         <div class="prescription-area">{{ prescription_advice | default('', true) }}</div>
+
     </div>
 
+
+
     <!-- PRESCRIPTION / ADVICE -->
+
     <div class="section">
+
         <div class="section-title">MEDICINES PRESCRIBED</div>
+
         <div class="prescription-area">{{ prescription_medicines | default('', true) }}</div>
+
     </div>
+
+
+
 
 
     <!-- DOCTOR'S SIGNATURE & SEAL -->
+
     <div class="section">
+
         <div class="section-title">DOCTOR'S SIGNATURE</div>
+
         <div class="signature-area">
+
              <img src="/static/signature_vijay.png" style="width: 90px; height: auto;max-width: 100%;">
+
         </div>
+
     </div>
+
+
 
     <div class="footer">
+
         MMU (Mobile Medical Unit) | Patient Prescription Card
+
     </div>
+
 </div>
 
+
+
 <div class="no-print" style="text-align:center; margin:20px;">
+
     <button onclick="window.print()">Print Prescription</button>
+
 </div>
+
 </body>
+
 </html>
