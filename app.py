@@ -60,6 +60,72 @@ def generate_report():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/prescription', methods=['GET'])
+def generate_prescription():
+    try:
+        query_params = request.args.to_dict()  # Convert query params to dictionary
+
+        if not query_params:
+            return jsonify({"error": "Missing query parameters"}), 400
+
+        query_params.update(get_age_group_flags(query_params.get("age")))
+        query_params["pregnant_woman"] = is_affirmative(query_params.get("pregnancy_status"))
+        query_params["high_risk_patient"] = any(
+            is_affirmative(query_params.get(field))
+            for field in ("high_risk_patient", "referral_required", "referral")
+        )
+
+        if query_params.get("prescription_medicines"):
+            medicine_list = query_params["prescription_medicines"].split("|", 1)
+
+            medicines = [m.strip() for m in medicine_list[0].split(",") if m.strip()]
+
+            quantities = (
+                [q.strip() for q in medicine_list[1].split(",") if q.strip()]
+                if len(medicine_list) > 1
+                else []
+            )
+
+            query_params["prescription_medicines"] = "\n".join(
+                f"{med} - {qty}"
+                for med, qty in zip(medicines, quantities)
+                if med and qty
+            )
+        output_folder = get_output_folder()
+        pdf_path = generate_pdf_prescription(query_params, output_folder, "English")
+
+         # Schedule cleanup after 5 seconds to ensure file transfer completes
+        def delayed_cleanup():
+            time.sleep(5)  # Wait for file transfer to finish
+            cleanup(output_folder, "", pdf_path)  # Delete all files
+
+        threading.Thread(target=delayed_cleanup).start()  # Run cleanup in the background
+
+        response = send_file(pdf_path, mimetype='application/pdf')
+        response.headers["Content-Disposition"] = f'inline; filename="{os.path.basename(pdf_path)}"'        
+        return response
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def get_age_group_flags(age):
+    try:
+        age = float(age)
+    except (TypeError, ValueError):
+        age = None
+
+    return {
+        "child_under_5": age is not None and 0 <= age <=5,
+        "adolescent": age is not None and 10 <= age <= 19,
+        "elderly": age is not None and age >= 60,
+    }
+
+
+def is_affirmative(value):
+    return str(value).strip().lower() in {"yes", "true", "1", "pregnant"}
+
+
 def load_summary():
     """Load the summary file and store responses in a dictionary."""
     df = pd.read_excel(SUMMARY_FILE)
@@ -142,9 +208,15 @@ def generate_pdf(data,output_folder,language):
     data = clean_data(data)
     get_and_update_summary_for_scores(data,language)
     get_category(data,language)
-    rendered_html = create_html(data,language)
+    rendered_html = create_html(data,language,"report")
 
     return create_pdf(data,rendered_html,output_folder)
+
+
+def generate_pdf_prescription(data,output_folder,language):
+    data = clean_data(data)
+    rendered_html = create_html(data,language,"prescription")
+    return create_pdf(data, rendered_html, output_folder, "prescription")
 
 def clean_data(data):
     # Trim all string values in the dictionary
@@ -163,13 +235,17 @@ def get_and_update_summary_for_scores(data,language):
         for param in summary_data.keys()
     })
 
-def create_html(data,language):
+def create_html(data,language,type):
     data.update({'father_name':get_father_name(data)})
 
-    if(language=="Hindi"):
-        rendered_html = render_template("report_template_hindi.html", data=data)
-    else:
-        rendered_html = render_template("report_template_english.html", data=data)
+    if (type == "report"):
+        if(language=="Hindi"):
+            rendered_html = render_template("report_template_hindi.html", data=data)
+        else:
+            rendered_html = render_template("report_template_english.html", data=data)
+
+    if (type == "prescription"):
+        rendered_html = render_template("prespcription_template_english.html", **data)
 
     # Convert static paths to absolute file paths
     static_folder = os.path.abspath("static")
@@ -183,7 +259,20 @@ def create_html(data,language):
 
 
 
-def create_pdf(data,rendered_html,output_folder):
+def create_pdf(data,rendered_html,output_folder,type):
+
+
+    if type == "report":
+        pdf_path = get_unique_filename(data,output_folder)
+
+    if type == "prescription":
+        pdf_path = get_unique_filename_prescription(data,output_folder)
+    # Generate PDF
+    pdfkit.from_string(rendered_html, pdf_path, options=options)
+    return pdf_path
+    
+def get_unique_filename(data,output_folder):
+    
     class_name = str(data.get('Class', 'Unknown')).replace(" ", "_")
     child_name = data.get('Name', 'Unknown')
 
@@ -194,14 +283,6 @@ def create_pdf(data,rendered_html,output_folder):
     
     
     father_name = get_father_name(data)
-   
-    pdf_path = get_unique_filename(output_folder,class_name,child_name,father_name)
-
-    # Generate PDF
-    pdfkit.from_string(rendered_html, pdf_path, options=options)
-    return pdf_path
-    
-def get_unique_filename(output_folder, class_name, child_name, father_name):
     base_filename = f"{class_name}_{child_name}_{father_name}"
     extension = ".pdf"
     counter = 1
@@ -215,6 +296,14 @@ def get_unique_filename(output_folder, class_name, child_name, father_name):
         counter += 1  # Increment counter if file exists
 
     return pdf_path
+
+
+def get_unique_filename_prescription(data,output_folder):
+    base_filename = f"{data.get('patient_id', 'Unknown')}_{data.get('patient_name', 'Unknown')}"
+    extension = ".pdf"
+
+    # Construct initial file path
+    pdf_path = os.path.join(output_folder, base_filename + extension)
     
 def get_father_name(data):
     father_name = (
