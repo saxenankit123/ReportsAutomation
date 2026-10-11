@@ -210,7 +210,7 @@ def generate_pdf(data,output_folder,language):
     get_category(data,language)
     rendered_html = create_html(data,language,"report")
 
-    return create_pdf(data,rendered_html,output_folder)
+    return create_pdf(data,rendered_html,output_folder,"report")
 
 
 def generate_pdf_prescription(data,output_folder,language):
