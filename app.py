@@ -299,12 +299,19 @@ def get_unique_filename(data,output_folder):
 
 
 def get_unique_filename_prescription(data,output_folder):
-    base_filename = f"{data.get('patient_id', 'Unknown')}_{data.get('patient_name', 'Unknown')}"
+    patient_id = str(data.get('patient_id') or "Unknown").replace(" ", "_")
+    patient_name = str(data.get('patient_name') or "Unknown").replace(" ", "_")
+    base_filename = f"{patient_id}_{patient_name}"
     extension = ".pdf"
 
-    # Construct initial file path
     pdf_path = os.path.join(output_folder, base_filename + extension)
-    
+    counter = 1
+    while os.path.exists(pdf_path):
+        pdf_path = os.path.join(output_folder, f"{base_filename}_{counter}{extension}")
+        counter += 1
+
+    return pdf_path
+
 def get_father_name(data):
     father_name = (
         data.get("Father's name") or  # Try straight apostrophe
